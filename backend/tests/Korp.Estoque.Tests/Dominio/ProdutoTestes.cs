@@ -91,7 +91,7 @@ public class ProdutoTestes
     {
         var produto = ProdutoComSaldo(10);
 
-        // Exemplo literal do enunciado do desafio:
+        // Exemplo canonico:
         // saldo anterior 10, nota usa 2, novo saldo 8.
         var movimentacao = produto.Baixar(2, NotaQualquer);
 

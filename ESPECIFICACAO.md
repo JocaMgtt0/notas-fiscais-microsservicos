@@ -1,14 +1,6 @@
 # Especificação Técnica: Sistema de Emissão de Notas Fiscais
 
-Teste prático Korp. Documento de requisitos fechado antes da implementação.
-
-| | |
-|---|---|
-| Candidato | Joaquim Menegotto Vieira |
-| Repositório | `Korp_Teste_JoaquimMenegottoVieira` |
-| Desafio recebido | 26/08/2026 |
-| Prazo de entrega | 02/09/2026 (7 dias corridos) |
-| Destinatário | rh@korp.com.br |
+Documento de requisitos fechado antes da implementação. Onde a implementação divergiu do plano, o texto foi atualizado para refletir o que foi construído.
 
 | Item | Decisão |
 |---|---|
@@ -19,7 +11,7 @@ Teste prático Korp. Documento de requisitos fechado antes da implementação.
 | Banco | PostgreSQL, um por serviço, sem tabela compartilhada |
 | Comunicação | REST síncrono com Polly (retry, timeout, circuit breaker) |
 | Impressão | PDF real gerado no backend com QuestPDF |
-| Opcional implementado | Tratamento de concorrência (lock otimista) |
+| Concorrência | Lock otimista com token de versão |
 | Testes | Unitários no domínio + integração no fluxo de impressão |
 | Orquestração | Docker Compose |
 
@@ -143,11 +135,11 @@ RN05 e RN12 juntas são o que cria o cenário de concorrência: entre incluir o 
           +-----------+
 ```
 
-O status `EmProcessamento` não está no PDF do desafio, mas é o que torna a recuperação de falha demonstrável. Ele é o registro de que existe uma operação distribuída em andamento.
+O status `EmProcessamento` não é um requisito de negócio, mas é o que torna a recuperação de falha possível. Ele é o registro de que existe uma operação distribuída em andamento.
 
 ---
 
-## 5. Fluxo de impressão (o coração do teste)
+## 5. Fluxo de impressão (o coração do sistema)
 
 ```
 Angular            Faturamento                      Estoque
@@ -180,17 +172,17 @@ Angular            Faturamento                      Estoque
 | Baixa deu certo mas PDF falhou | 200 | Chama `POST /produtos/estorno`, volta nota para Aberta | 500 `FALHA_GERACAO_PDF` |
 | Estorno também falhou | erro | Log crítico, nota permanece EmProcessamento | 500 `INTERVENCAO_MANUAL` |
 
-Esse último caso é honesto e vale ponto no vídeo: nenhuma compensação é 100%, e reconhecer isso mostra maturidade.
+Esse último caso é deliberado: nenhuma compensação é 100% garantida, e o sistema sinaliza a necessidade de intervenção em vez de esconder o problema.
 
-### Como demonstrar no vídeo
+### Como demonstrar
 
-`docker compose stop estoque`, clicar em imprimir, mostrar a mensagem de indisponibilidade e a nota continuando Aberta. Subir o serviço de volta e imprimir com sucesso. Leva 40 segundos e responde o requisito obrigatório 2 de forma inequívoca.
+`docker compose stop estoque`, clicar em imprimir, ver a mensagem de indisponibilidade e a nota continuando Aberta. Subir o serviço de volta e imprimir com sucesso.
 
 ---
 
-## 6. Tratamento de concorrência (opcional implementado)
+## 6. Tratamento de concorrência
 
-Cenário do PDF: produto com saldo 1 disputado por duas notas ao mesmo tempo.
+Cenário: produto com saldo 1 disputado por duas notas ao mesmo tempo.
 
 Implementação no serviço de Estoque:
 - Coluna `Versao` na entidade Produto, configurada como `IsConcurrencyToken()` no EF Core
@@ -200,7 +192,7 @@ Implementação no serviço de Estoque:
 
 Resultado esperado: das duas notas, uma fecha e a outra recebe `SALDO_INSUFICIENTE` ou `CONFLITO_CONCORRENCIA`. O saldo nunca fica negativo e nunca perde unidade.
 
-Demo no vídeo: dois cliques simultâneos em duas abas, ou um script com duas requisições paralelas.
+Demonstração: `scripts/demo-concorrencia.ps1` dispara duas impressões em paralelo. Duas abas de navegador não serviriam, porque a janela de disputa é de milissegundos.
 
 ---
 
@@ -241,7 +233,6 @@ O Angular consome os dois serviços diretamente. Sem API Gateway, decisão consc
 
 ```json
 {
-  "type": "https://korp.teste/erros/saldo-insuficiente",
   "title": "Saldo insuficiente",
   "status": 422,
   "detail": "O produto PRD-001 possui saldo 3 e a nota requer 5 unidades.",
@@ -321,7 +312,7 @@ Nenhuma FK atravessa os bancos. Isso é intencional e é o ponto que prova que s
 2. **Notas fiscais**: tabela com filtro por status, coluna de número, status e total de itens
 3. **Detalhe da nota**: cabeçalho com número e status, tabela de itens, adicionar item por autocomplete de produto, botão Imprimir com spinner
 
-### Uso obrigatório e deliberado (é cobrado no vídeo)
+### Uso deliberado de recursos do Angular
 
 **Ciclos de vida**
 - `ngOnInit`: carga inicial das listas
@@ -333,7 +324,6 @@ Nenhuma FK atravessa os bancos. Isso é intencional e é o ponto que prova que s
 - `catchError` no `HttpInterceptor` global, traduzindo ProblemDetails em toast
 - `finalize` para desligar o spinner do botão de impressão em qualquer desfecho
 - `forkJoin` para carregar nota e catálogo de produtos em paralelo
-- `retry` com backoff nas listagens
 
 **Outros**
 - Reactive Forms com validadores customizados
@@ -352,7 +342,7 @@ Nenhuma FK atravessa os bancos. Isso é intencional e é o ponto que prova que s
 - Correlation ID propagado do Angular ao Faturamento e ao Estoque, presente em todos os logs
 - Health checks em `/health`
 - Middleware global de exceção, nenhuma stack trace vazando para o cliente
-- Validação de entrada com FluentValidation
+- Validação de entrada nas entidades de domínio, sem duplicar a regra na borda da API
 
 ---
 
@@ -382,55 +372,4 @@ Aplicação:
 
 ## 12. Fora de escopo
 
-Autenticação, autorização, multiusuário, API Gateway, cancelamento ou estorno de nota fechada, relatórios, mensageria, idempotência por header, funcionalidade de IA. Documentado por decisão, não por esquecimento. Registrar isso no README é sinal de maturidade, não de omissão.
-
----
-
-## 13. Checklist do detalhamento técnico exigido
-
-O e-mail de entrega cobra estes oito itens. Cada um precisa ter resposta pronta no README e no vídeo:
-
-- [ ] Ciclos de vida do Angular utilizados e onde
-- [ ] Uso de RxJS e de que forma
-- [ ] Demais bibliotecas e a finalidade de cada uma
-- [ ] Bibliotecas de componentes visuais
-- [ ] Gerenciamento de dependências no Golang (não aplicável, projeto em C#, mencionar)
-- [ ] Frameworks utilizados no C#
-- [ ] Tratamento de erros e exceções no backend
-- [ ] Uso de LINQ e de que forma
-
----
-
-## 14. Entregáveis
-
-1. Repositório público no GitHub: `Korp_Teste_JoaquimMenegottoVieira`
-2. Vídeo demonstrando telas, funcionalidades e detalhamento técnico, hospedado em nuvem com link público
-3. Detalhamento técnico escrito, cobrindo os oito itens acima
-4. Envio para rh@korp.com.br até 02/09/2026
-
----
-
-## 15. Cronograma
-
-Desafio recebido em 26/08/2026, prazo em 02/09/2026. Restam 4 dias de desenvolvimento mais o dia da entrega.
-
-| Data | Entrega |
-|---|---|
-| Sáb 29/08 | Solution, Docker Compose, EF Core, migrations, seed, CRUD de Estoque completo |
-| Dom 30/08 | CRUD de Faturamento (notas, itens, sequence) e fluxo de impressão com Polly e compensação |
-| Seg 31/08 | QuestPDF, lock otimista, testes unitários e de integração |
-| Ter 01/09 | Angular completo: 3 telas, interceptors, RxJS, tratamento de erro |
-| Qua 02/09 | README com o detalhamento técnico, gravação do vídeo, revisão e envio |
-
-### Ordem de corte se o prazo apertar
-
-Cortar de cima para baixo, nunca fora dessa ordem:
-
-1. Testes de integração (manter os unitários de domínio)
-2. Tratamento de concorrência (é opcional pelo desafio, então cortar não penaliza)
-3. QuestPDF, voltando a impressão para `window.print()` no Angular
-4. Paginação e busca nas listagens
-
-### Nunca cortar
-
-Os dois microsserviços, o banco real, a recuperação de falha entre serviços, e o vídeo. São os três requisitos obrigatórios mais o entregável que a Korp exige por e-mail. Reservar a manhã de 02/09 para o vídeo é inegociável: projeto perfeito sem vídeo é reprovação automática.
+Autenticação, autorização, multiusuário, API Gateway, cancelamento ou estorno de nota fechada, relatórios, mensageria, idempotência por header, funcionalidade de IA. Documentado por decisão, não por esquecimento.

@@ -39,7 +39,7 @@ public static class SemeadorDeDados
             Produto.Criar("PRD-009", "Placa de video (ultima unidade)",   1),
 
             // Saldo 0 de proposito: demonstra a recusa por saldo insuficiente
-            // sem precisar esvaziar nenhum outro produto durante o video.
+            // sem precisar esvaziar nenhum outro produto durante a demonstracao.
             Produto.Criar("PRD-010", "Notebook 16GB (sem estoque)",       0)
         };
 

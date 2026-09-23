@@ -61,7 +61,7 @@ public class ManipuladorGlobalDeExcecoes : IExceptionHandler
                 })
             }),
 
-        // Requisito obrigatorio do desafio: o servico caiu, a nota voltou para
+        // Cenario central de falha: o servico caiu, a nota voltou para
         // Aberta e o usuario recebe uma mensagem que explica o que aconteceu.
         EstoqueIndisponivelExcecao e =>
             Montar(StatusCodes.Status503ServiceUnavailable, "Servico de Estoque indisponivel", e),

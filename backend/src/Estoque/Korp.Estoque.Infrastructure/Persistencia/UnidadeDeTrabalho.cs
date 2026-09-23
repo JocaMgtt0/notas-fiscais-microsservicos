@@ -19,7 +19,7 @@ public sealed class ConflitoDeConcorrenciaExcecao : ExcecaoDeDominio
 /// <summary>
 /// Unidade de trabalho com tratamento de concorrencia otimista.
 ///
-/// Este e o requisito opcional (a) do desafio: produto com saldo 1 disputado
+/// Resolve o cenario classico de disputa: produto com saldo 1 disputado
 /// por duas notas ao mesmo tempo.
 ///
 /// Como funciona:

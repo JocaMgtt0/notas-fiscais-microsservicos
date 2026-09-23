@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 namespace Korp.Faturamento.Application.Servicos;
 
 /// <summary>
-/// A operacao central do desafio: imprimir uma nota fiscal.
+/// A operacao central do sistema: imprimir uma nota fiscal.
 ///
 /// Ela atravessa dois servicos com bancos separados, e por isso **nao existe
 /// transacao que cubra as duas pontas**. Nao da para fazer "ou tudo, ou nada"

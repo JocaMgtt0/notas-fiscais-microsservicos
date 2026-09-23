@@ -22,11 +22,11 @@ As escolhas que definiram o projeto foram minhas:
 
 | Decisão | Alternativa descartada | Por quê |
 |---|---|---|
-| C# com .NET 8 | Go | Venho de Java, e a proximidade reduz o risco de erro conceitual em um prazo curto |
+| C# com .NET 8 | Go | Venho de Java, e a proximidade reduz o risco de erro conceitual em um prazo curto de sete dias |
 | REST síncrono com Polly | RabbitMQ com padrão Outbox | Mais robusto, mas somaria dois dias e o prazo era de sete |
-| PDF real com QuestPDF | Apenas simular o processamento | O desafio pede impressão, e um documento de verdade torna a demonstração honesta |
-| Concorrência como opcional escolhido | Idempotência, IA | Melhor relação entre esforço e o que o desafio avalia |
-| Sem cliente e sem valores na nota | Inventar campos para o PDF ficar cheio | O desafio especifica numeração, status e produtos. Escopo extra em teste com prazo é risco |
+| PDF real com QuestPDF | Apenas simular o processamento | Imprimir é o núcleo do fluxo, e um documento de verdade torna a demonstração honesta |
+| Priorizar concorrência | Idempotência | O cenário de disputa pelo saldo é o risco mais real do fluxo de impressão |
+| Sem cliente e sem valores na nota | Inventar campos para o PDF ficar cheio | O domínio foi definido como numeração, status e produtos. Escopo extra sem demanda é risco |
 
 Também foi minha a decisão de escrever os testes junto com cada camada, e não deixá-los para o fim. O argumento que me convenceu: teste no fim é o primeiro item a ser cortado quando o prazo aperta.
 
@@ -115,7 +115,5 @@ O que sustenta a confiança neste código não é a origem dele, é o que foi fe
 A IA errou nos seis casos acima, e provavelmente em outros que ainda não apareceram. Ela acertou a estrutura e escreveu muito código correto, mas quem decidiu o escopo, quem cobrou a verificação e quem sabe explicar cada decisão fui eu.
 
 O histórico de commits mostra a evolução real do trabalho, incluindo os commits de correção. Não houve reescrita de história para esconder os erros, porque os erros e as correções são parte do que aconteceu.
-
-Estou à disposição para detalhar qualquer decisão técnica deste projeto, por escrito ou ao vivo.
 
 Joaquim Menegotto Vieira

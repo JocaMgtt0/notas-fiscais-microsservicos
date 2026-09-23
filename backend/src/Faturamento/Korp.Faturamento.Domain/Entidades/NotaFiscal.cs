@@ -7,14 +7,13 @@ public enum StatusNotaFiscal
     Aberta = 1,
 
     /// <summary>
-    /// Estado intermediario, criado por decisao de projeto e nao exigido pelo
-    /// desafio. Existe porque a impressao atravessa dois servicos com bancos
+    /// Estado intermediario, criado por decisao de projeto. Existe porque a impressao atravessa dois servicos com bancos
     /// separados, e portanto nao cabe em uma transacao de banco.
     ///
     /// Enquanto a nota esta neste estado, ha uma operacao distribuida em curso.
     /// Sem ele nao daria para distinguir "ninguem imprimiu ainda" de "a baixa
-    /// foi enviada e nao sabemos o desfecho", e a recuperacao de falha exigida
-    /// pelo desafio ficaria impossivel de demonstrar.
+    /// foi enviada e nao sabemos o desfecho", e a recuperacao de falha entre
+    /// os servicos ficaria impossivel.
     /// </summary>
     EmProcessamento = 2,
 

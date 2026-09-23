@@ -1,4 +1,4 @@
-# Demonstracao do requisito opcional (a) do desafio:
+# Demonstracao do tratamento de concorrencia:
 # produto com saldo 1 sendo utilizado simultaneamente por duas notas.
 #
 # Prepara duas notas com o mesmo produto e dispara as duas impressoes em

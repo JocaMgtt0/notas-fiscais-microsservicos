@@ -89,7 +89,7 @@ services:
         condition: service_healthy
     # Nao usa depends_on service_healthy do estoque de proposito:
     # o Faturamento precisa subir mesmo com o Estoque fora do ar.
-    # E exatamente esse o cenario de falha exigido pelo desafio.
+    # E exatamente esse o cenario de falha que o sistema precisa suportar.
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:8080/health"]
       interval: 10s

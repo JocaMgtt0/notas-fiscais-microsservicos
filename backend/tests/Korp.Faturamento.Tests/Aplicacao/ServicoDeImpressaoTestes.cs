@@ -134,7 +134,7 @@ public class ServicoDeImpressaoTestes
         await _estoque.DidNotReceiveWithAnyArgs().BaixarAsync(default, default!, default);
     }
 
-    // ---------- Falha na baixa: requisito obrigatorio do desafio ----------
+    // ---------- Falha na baixa: recuperacao entre servicos ----------
 
     [Fact]
     public async Task Estoque_fora_do_ar_devolve_a_nota_para_aberta_e_nao_compensa()

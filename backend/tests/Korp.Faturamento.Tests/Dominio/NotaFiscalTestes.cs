@@ -8,7 +8,7 @@ namespace Korp.Faturamento.Tests.Dominio;
 /// <summary>
 /// Testes da maquina de estados e das regras de edicao da nota fiscal.
 ///
-/// A maquina de estados e o ponto mais delicado do desafio: e ela que
+/// A maquina de estados e o ponto mais delicado do sistema: e ela que
 /// sustenta a recuperacao de falha entre os dois servicos. Cada transicao
 /// valida e cada transicao proibida tem teste.
 /// </summary>

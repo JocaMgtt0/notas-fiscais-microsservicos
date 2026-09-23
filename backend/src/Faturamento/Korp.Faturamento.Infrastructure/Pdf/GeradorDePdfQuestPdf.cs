@@ -9,10 +9,9 @@ namespace Korp.Faturamento.Infrastructure.Pdf;
 /// <summary>
 /// Geracao do PDF da nota fiscal com QuestPDF.
 ///
-/// O documento contem exatamente o que o desafio especifica para uma nota:
+/// O documento contem exatamente o que o modelo da nota define:
 /// numeracao, status, data e a lista de produtos com quantidades. Nao ha
-/// cliente, preco nem valor total porque nada disso foi pedido, e inventar
-/// campo em teste com prazo e risco sem retorno.
+/// cliente, preco nem valor total porque estao fora do escopo do dominio.
 ///
 /// O PDF e gerado sob demanda e nunca armazenado. Nota fechada e imutavel,
 /// entao o documento sai identico toda vez: guardar o arquivo so acrescentaria

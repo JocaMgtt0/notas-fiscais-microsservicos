@@ -7,7 +7,7 @@ using Xunit;
 namespace Korp.Estoque.Tests.Integracao;
 
 /// <summary>
-/// Requisito opcional (a) do desafio: produto com saldo 1 sendo utilizado
+/// Cenario de concorrencia: produto com saldo 1 sendo utilizado
 /// simultaneamente por duas notas.
 ///
 /// Este teste so tem valor contra um banco real. Com duble, ele provaria

@@ -37,7 +37,7 @@ public static class InjecaoDeDependencia
 
     /// <summary>
     /// Registra o cliente do servico de Estoque com as tres politicas de
-    /// resiliencia exigidas pelo desafio.
+    /// resiliencia (retry, timeout e circuit breaker).
     ///
     /// A ordem do registro define o aninhamento, e a primeira politica
     /// adicionada e a mais externa:
